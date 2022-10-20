@@ -86,6 +86,10 @@ const cardNumberPattern = {
       regex: /^4\d{0,15}/,
       cardtype: 'visa'
     },
+    {
+      mask: "0000 0000 0000 0000",
+      cardtype: "default",
+    },
   ],
   /* docs*/
   dispatch: function (append, dynamicMasked) {
@@ -97,10 +101,68 @@ const cardNumberPattern = {
       return number.match(item.regex)
 
     })
-    console.log(findMask)
+
     return findMask
 
   }
 }
+
 const cardNumberMasked = IMask(cardNumber, cardNumberPattern)
 
+/* pega input*/
+const titularName = document.querySelector("#card-holder")
+
+
+//Aula 02 - adicionando eventos da DOM
+
+titularName.addEventListener("input", () => {
+  const ccHolderName = document.querySelector(".cc-holder .value")
+  /*mudando valores dentro do html*/
+
+  ccHolderName.innerHTML = titularName.value.length === 0 ? "Fulano" : titularName.value
+})
+
+
+// adicionando evento ao botao
+const Button = document.querySelector("#addCard")
+Button.addEventListener("click", () => {
+  event.preventDefault()
+
+})
+
+
+// modificando security code do cartao no HTML de acordo com o digito do usuario
+securityCodeMask.on("accept", () => {
+  onUpdateSecurityCode(securityCodeMask.value)
+
+})
+function onUpdateSecurityCode(code) {
+  const ccSecurity = document.querySelector(".cc-security .value")
+
+  ccSecurity.innerHTML = code.length === 0 ? '123' : code
+}
+
+
+//modificando numero do cartao de acordo com o digito do usuario
+cardNumberMasked.on("accept", () => {
+  
+  const cardtype = cardNumberMasked.masked.currentMask.cardtype
+
+  setCardType(cardtype)
+  
+  onUpdateCardNumber(cardNumberMasked.value)
+})
+
+function onUpdateCardNumber(number) {
+  const ccNumber = document.querySelector(".cc-number")
+  ccNumber.innerHTML = number.length === 0 ? '1234 5678 9012 3458' : number
+}
+
+expirationDateMask.on("accept", () => {
+  onUpdateExpirationDate(expirationDateMask.value)
+
+})
+function onUpdateExpirationDate(date) {
+  const ccExpiration = document.querySelector(".cc-extra .value")
+  ccExpiration.innerHTML = date.length ===0? '02/22' :date
+}
